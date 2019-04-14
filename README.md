@@ -37,7 +37,7 @@ Create a database and then a table within it, something like this:
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 CREATE TABLE log_records (
                             time   TIMESTAMP NOT NULL,
-                            tag    CHAR[128] NOT NULL,
+                            tag    CHAR(128) NOT NULL,
                             record JSONB     NOT NULL
 );
 SELECT create_hypertable('log_records', 'time');

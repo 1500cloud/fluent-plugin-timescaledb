@@ -13,7 +13,7 @@ module Fluent
         super
 
         @conn = PG.connect(@db_conn_string)
-        @conn.prepare('insert_record', "INSERT INTO \"#{@db_table_name}\" (time, tag, record) VALUES ($1, $2, $3)")
+        @conn.prepare('insert_record', "INSERT INTO \"#{@db_table_name}\" (time, tag, record) VALUES ($1, $2, $3::jsonb)")
       end
 
       def close
