@@ -22,7 +22,7 @@ module Fluent
 
       def write(chunk)
         chunk.msgpack_each do | tag, time, record |
-          @conn.exec_prepared('insert_record', [time, tag, record])
+          @conn.exec_prepared('insert_record', [Time.at(time.to_f), tag, record])
         end
       end
 
