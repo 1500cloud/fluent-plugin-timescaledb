@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'fluent-plugin-timescaledb'
-  s.version     = '1.0.0'
+  s.version     = '1.0.1'
   s.license     = 'Apache-2.0'
   s.summary     = "Write Fluent logs to TimescaleDB"
   s.description = "Write Fluent logs to TimescaleDB"
