@@ -13,7 +13,6 @@ module Fluent
         super
 
         @conn = PG.connect(@db_conn_string)
-        @conn.prepare('insert_record', "INSERT INTO \"#{@db_table_name}\" (time, tag, record) VALUES ($1, $2, $3::jsonb)")
       end
 
       def close
@@ -21,9 +20,12 @@ module Fluent
       end
 
       def write(chunk)
+        values = []
         chunk.msgpack_each do | tag, time, record |
-          @conn.exec_prepared('insert_record', [Time.at(time.to_f), tag, record.to_json])
+          values << "('#{@conn.escape_string(format_time(time))}','#{@conn.escape_string(tag)}','#{@conn.escape_string(record.to_json)}'::jsonb)"
         end
+
+        @conn.exec("INSERT INTO #{@conn.escape_identifier(@db_table_name)} (time, tag, record) VALUES #{values.join(',')}")
       end
 
       def format(tag, time, record)
@@ -32,6 +34,14 @@ module Fluent
 
       def formatted_to_msgpack_binary
         true
+      end
+
+      private
+
+      TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%N".freeze
+
+      def format_time(time)
+        Time.at(time.to_f).utc.strftime(TIME_FORMAT)
       end
     end
   end
