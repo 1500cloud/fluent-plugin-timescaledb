@@ -16,10 +16,12 @@ module Fluent
       end
 
       def close
-        @conn.close if @conn
+        @conn.close if @conn and !@conn.finished?
       end
 
       def write(chunk)
+        reconnect_if_connection_bad!
+
         values = []
         chunk.msgpack_each do | tag, time, record |
           values << "('#{@conn.escape_string(format_time(time))}','#{@conn.escape_string(tag)}','#{@conn.escape_string(record.to_json)}'::jsonb)"
@@ -42,6 +44,12 @@ module Fluent
 
       def format_time(time)
         Time.at(time.to_f).utc.strftime(TIME_FORMAT)
+      end
+
+      def reconnect_if_connection_bad!
+        if @conn.status == PG::CONNECTION_BAD
+          @conn.reset
+        end
       end
     end
   end
