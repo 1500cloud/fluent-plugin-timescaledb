@@ -27,7 +27,7 @@ module Fluent
           values << "('#{@conn.escape_string(format_time(time))}','#{@conn.escape_string(tag)}','#{@conn.escape_string(record.to_json)}'::jsonb)"
         end
 
-        @conn.exec("INSERT INTO #{@conn.escape_identifier(@db_table_name)} (time, tag, record) VALUES #{values.join(',')}")
+        @conn.exec("INSERT INTO #{@db_table_name} (time, tag, record) VALUES #{values.join(',')}")
       end
 
       def format(tag, time, record)
